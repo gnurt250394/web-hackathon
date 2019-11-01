@@ -18,7 +18,8 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import AddQuestions from './add-questions'
 import AddReply from './add-reply'
 import IconButton from '@material-ui/core/IconButton';
-import { getQuestions,getReply } from '../../../../utils/apiAxios'
+import { getQuestions, getReply } from '../../../../utils/apiAxios'
+import ConfirmDialog from '../../components/confirm/';
 
 
 function Transition(props) {
@@ -31,7 +32,7 @@ class DetailReply extends React.Component {
         console.log('this.props.data: ', this.props.data);
         this.state = {
             open: true,
-            dataReply:[],
+            dataReply: [],
             name: this.props.data && this.props.data.roles ? this.props.data.roles.name : '',
             code: this.props.data && this.props.data.roles ? this.props.data.roles.code : '',
             userCreate: this.props.data && this.props.data.createPerson ? this.props.data.createPerson : '',
@@ -43,6 +44,7 @@ class DetailReply extends React.Component {
             checked: false,
             addReply: false,
             stt: 1,
+            confirmDialog:false,
             dataPermission: []
 
         };
@@ -78,8 +80,8 @@ class DetailReply extends React.Component {
         this.setState({ addQuestions: false, addReply: false });
     }
     showModalAdd = () => {
-            this.setState({ addReply: true,})
-        
+        this.setState({ addReply: true, })
+
     }
     renderObjectType = () => {
         const objectType = this.props.data.objectType
@@ -118,7 +120,7 @@ class DetailReply extends React.Component {
     }
     render() {
         const { classes } = this.props;
-        const { name, code, createdDate, dataReply, progress, loadPage } = this.state;
+        const { name, code, confirmDialog, dataReply, progress, loadPage } = this.state;
         return (
             <div style={{ backgroundColor: 'red' }}>
                 <Dialog
@@ -196,6 +198,8 @@ class DetailReply extends React.Component {
                     </DialogActions>
                 </Dialog>
                 {this.state.addReply && <AddReply data={this.props.data} callbackOff={this.closeModal2.bind(this)} />}
+                {confirmDialog && <ConfirmDialog title="Xác nhận" content="Bạn có chắc chắn muốn xóa role này ra khỏi danh sách?" btnOk="Xác nhận" btnCancel="Hủy" cbFn={this.delete.bind(this)} />}
+
             </div>
         );
     }

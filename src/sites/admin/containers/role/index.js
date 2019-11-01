@@ -93,7 +93,7 @@ class MgrRole extends React.Component {
 
   closeModal() {
     this.loadPage();
-    this.setState({ modalAdd: false, modalDetailRole: false, modalDetailUserRole: false, addQuestions: false,dataListQues:[] });
+    this.setState({ modalAdd: false, modalDetailRole: false, modalDetailUserRole: false, addQuestions: false, dataListQues: [] });
   }
 
   modalCreateUpdate(item) {
@@ -118,36 +118,16 @@ class MgrRole extends React.Component {
   }
 
   delete(type) {
-    this.setState({ confirmDialog: false })
-    let id = this.state.tempDelete._id
-    let token = this.props.userApp.currentUser.token
-    deleteListquestion(id, token).then(res => {
-      console.log('res: ', res);
-      this.loadPage();
-      this.setState({ tempDelete: {} });
-    })
-    // if (type == 1) {
-    //   RoleProvider.delete(this.state.tempDelete.roles.id).then(s => {
-    //     if (s && s.data) {
-    //       toast.success("Xóa role thành công!", {
-    //         position: toast.POSITION.TOP_CENTER
-    //       });
-    //       this.setState({ page: 0 });
-    //       this.loadPage();
-    //       this.setState({ tempDelete: {} });
-    //     }
-    //     else if (s.code == 2) {
-    //       toast.error("Không xóa được role vì đã có user/staff!", {
-    //         position: toast.POSITION.TOP_CENTER
-    //       });
-    //     }
-    //     else {
-    //       toast.error("Xóa role không thành công!", {
-    //         position: toast.POSITION.TOP_CENTER
-    //       });
-    //     }
-    //   })
-    // }
+    if (type == 1) {
+      this.setState({ confirmDialog: false })
+      let id = this.state.tempDelete._id
+      let token = this.props.userApp.currentUser.token
+      deleteListquestion(id, token).then(res => {
+        console.log('res: ', res);
+        this.loadPage();
+        this.setState({ tempDelete: {} });
+      })
+    }
   }
 
   handleCheckUserAdmin() {
@@ -366,8 +346,8 @@ class MgrRole extends React.Component {
         return (<TableCell onClick={() => this.modalDetailAdmin(item)}>Hiển thị lần đầu</TableCell>)
       case 2:
         return (<TableCell onClick={() => this.modalDetailAdmin(item)}>Hiển thị hằng ngày</TableCell>)
-        default:
-          return  (<TableCell onClick={() => this.modalDetailAdmin(item)}></TableCell>)
+      default:
+        return (<TableCell onClick={() => this.modalDetailAdmin(item)}></TableCell>)
     }
 
   }

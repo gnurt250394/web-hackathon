@@ -19,7 +19,10 @@ import AddQuestions from './add-questions'
 import AddReply from './add-reply'
 import DetailReply from './detail-reply'
 import IconButton from '@material-ui/core/IconButton';
-import { getQuestions } from '../../../../utils/apiAxios'
+import { getQuestions, deleteQuestion } from '../../../../utils/apiAxios'
+import ConfirmDialog from '../../components/confirm/';
+import { toast } from 'react-toastify';
+import EditQuestion from './edit-question';
 
 
 function Transition(props) {
@@ -32,7 +35,7 @@ class DetailRole extends React.Component {
         console.log('this.props.data: ', this.props.data);
         this.state = {
             open: true,
-            dataQuestion: this.props.data.questions,
+            dataQuestion: [],
             name: this.props.data && this.props.data.roles ? this.props.data.roles.name : '',
             code: this.props.data && this.props.data.roles ? this.props.data.roles.code : '',
             userCreate: this.props.data && this.props.data.createPerson ? this.props.data.createPerson : '',
@@ -43,9 +46,11 @@ class DetailRole extends React.Component {
             progress: false,
             checked: false,
             addReply: false,
+            modalEdit: false,
             detailReply: false,
             stt: 1,
-            dataPermission: []
+            dataPermission: [],
+            confirmDialog: false
 
         };
     }
@@ -54,7 +59,9 @@ class DetailRole extends React.Component {
         this.loadPage()
     }
 
-
+    showModalDelete(item) {
+        this.setState({ confirmDialog: true, tempDelete: item })
+    }
 
     handleClose = () => {
         this.props.callbackOff()
@@ -77,7 +84,7 @@ class DetailRole extends React.Component {
     }
     closeModal2() {
         this.loadPage()
-        this.setState({ addQuestions: false, addReply: false, detailReply: false });
+        this.setState({ addQuestions: false, addReply: false, detailReply: false, modalEdit: false });
     }
     showModalAdd = (item) => {
         if (item) {
@@ -86,6 +93,22 @@ class DetailRole extends React.Component {
             this.setState({ addQuestions: true, })
         }
 
+    }
+    modalCreateUpdate(item) {
+        if (item) {
+            this.setState({
+                modalEdit: true,
+                dataEdit: item,
+            })
+
+        }
+        else {
+            this.setState({
+                modalAdd: true,
+                dataEdit: {}
+            })
+
+        }
     }
     renderObjectType = () => {
         const objectType = this.props.data.objectType
@@ -122,16 +145,40 @@ class DetailRole extends React.Component {
         }
 
     }
+    renderTypeQues = (item) => {
+        switch (Number(item.type)) {
+            case 1:
+                return (<TableCell onClick={() => this.modalDetailAdmin(item)}>Chọn số</TableCell>)
+            case 2:
+                return (<TableCell onClick={() => this.modalDetailAdmin(item)}>Trắc nghiệm</TableCell>)
+            case 3:
+                return (<TableCell onClick={() => this.modalDetailAdmin(item)}>Checkbox</TableCell>)
+            default:
+                return (<TableCell onClick={() => this.modalDetailAdmin(item)}>Chưa chọn</TableCell>)
+        }
+    }
     modalDetailAdmin(item) {
         this.setState({ detailReply: true, dataReply: item, })
     }
-    showModalDelete(item) {
-        this.setState({ confirmDialog: true, tempDelete: item })
-      }
-    
+    delete(type) {
+        if (type == 1) {
+            this.setState({ confirmDialog: false })
+            let id = this.state.tempDelete._id
+            let token = this.props.userApp.currentUser.token
+            deleteQuestion(id, token).then(res => {
+                console.log('res: ', res);
+                this.loadPage();
+                toast.success("Xóa câu hỏi thành công!", {
+                    position: toast.POSITION.TOP_CENTER
+                });
+                this.setState({ tempDelete: {} });
+            })
+        }
+
+    }
     render() {
         const { classes } = this.props;
-        const { progress, dataQuestion } = this.state;
+        const { progress, dataQuestion, confirmDialog } = this.state;
         return (
             <div style={{ backgroundColor: 'red' }}>
                 <Dialog
@@ -188,7 +235,6 @@ class DetailRole extends React.Component {
                                         <TableCell>Câu hỏi</TableCell>
                                         <TableCell>Màn hình</TableCell>
                                         <TableCell>Định dạng</TableCell>
-                                        <TableCell>Lựa chọn</TableCell>
                                         <TableCell>Tiện ích</TableCell>
                                         <TableCell></TableCell>
                                     </TableRow>
@@ -204,9 +250,8 @@ class DetailRole extends React.Component {
                                                     <TableCell onClick={() => this.modalDetailAdmin(item)}>{index + 1}</TableCell>
                                                     <TableCell onClick={() => this.modalDetailAdmin(item)}>{item.name}</TableCell>
                                                     <TableCell onClick={() => this.modalDetailAdmin(item)}>{item.position}</TableCell>
-                                                    <TableCell onClick={() => this.modalDetailAdmin(item)}>{item.type}</TableCell>
-                                                    <TableCell onClick={() => this.modalDetailAdmin(item)}>{item.name}</TableCell>
-                                                    <TableCell onClick={() => this.modalDetailAdmin(item)}>
+                                                    {this.renderTypeQues(item)}
+                                                    <TableCell>
                                                         {
                                                             <IconButton onClick={() => this.modalCreateUpdate(item, 1)} color="primary" className={classes.button} aria-label="EditIcon">
                                                                 <img alt="" src="/images/icon/edit1.png" />
@@ -230,6 +275,7 @@ class DetailRole extends React.Component {
                                     }
                                 </TableBody>
                             </Table>
+                            {confirmDialog && <ConfirmDialog title="Xác nhận" content="Bạn có chắc chắn muốn xóa role này ra khỏi danh sách?" btnOk="Xác nhận" btnCancel="Hủy" cbFn={this.delete.bind(this)} />}
                         </div>
                     </DialogContent>
                     <TableCell>
@@ -244,6 +290,9 @@ class DetailRole extends React.Component {
                 {this.state.addQuestions && <AddQuestions data={this.props.data} callbackOff={this.closeModal2.bind(this)} />}
                 {this.state.addReply && <AddReply data={this.state.questionsData} callbackOff={this.closeModal2.bind(this)} />}
                 {this.state.detailReply && <DetailReply data={this.state.dataReply} callbackOff={this.closeModal2.bind(this)} />}
+                {this.state.modalEdit && <EditQuestion data={this.props.data} callbackOff={this.closeModal2.bind(this)} />}
+
+
             </div>
         );
     }
