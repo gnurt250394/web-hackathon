@@ -1,8 +1,8 @@
 import axios from "axios";
 
 var instance = axios.create({
-    baseURL: 'http://10.0.40.13:8000/api',
-    // baseURL: 'https://app-hackathon-2019.herokuapp.com/api',
+    // baseURL: 'http://10.0.40.13:8000/api',
+    baseURL: 'https://app-hackathon-2019.herokuapp.com/api',
     timeout: 50000
 });
 
