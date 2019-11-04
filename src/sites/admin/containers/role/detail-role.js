@@ -95,6 +95,7 @@ class DetailRole extends React.Component {
 
     }
     modalCreateUpdate(item) {
+        console.log('item: ', item);
         if (item) {
             this.setState({
                 modalEdit: true,
@@ -174,7 +175,6 @@ class DetailRole extends React.Component {
                 this.setState({ tempDelete: {} });
             })
         }
-
     }
     render() {
         const { classes } = this.props;
@@ -290,7 +290,7 @@ class DetailRole extends React.Component {
                 {this.state.addQuestions && <AddQuestions data={this.props.data} callbackOff={this.closeModal2.bind(this)} />}
                 {this.state.addReply && <AddReply data={this.state.questionsData} callbackOff={this.closeModal2.bind(this)} />}
                 {this.state.detailReply && <DetailReply data={this.state.dataReply} callbackOff={this.closeModal2.bind(this)} />}
-                {this.state.modalEdit && <EditQuestion data={this.props.data} callbackOff={this.closeModal2.bind(this)} />}
+                {this.state.modalEdit && <EditQuestion data={this.state.dataEdit} callbackOff={this.closeModal2.bind(this)} />}
 
 
             </div>

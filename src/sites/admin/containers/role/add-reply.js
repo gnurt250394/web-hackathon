@@ -141,12 +141,12 @@ class AddReply extends React.Component {
         let total = this.state.total
         let question_id = this.state.dataEdit._id
         console.log('this.state.dataEdit: ', this.state.dataEdit);
-        if (from < to) {
-            toast.error("Bạn nhập sai khung điểm", {
-                position: toast.POSITION.TOP_CENTER
-            });
-            return
-        }
+        // if (from < to) {
+        //     toast.error("Bạn nhập sai khung điểm", {
+        //         position: toast.POSITION.TOP_CENTER
+        //     });
+        //     return
+        // }
         let data = [
             {
                 name,

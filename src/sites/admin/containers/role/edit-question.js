@@ -14,7 +14,7 @@ import { SelectValidator } from 'react-material-ui-form-validator';
 import MenuItem from '@material-ui/core/MenuItem';
 import ConfirmDialog from '../../components/confirm';
 import RoleProvider from '../../../../data-access/role-provider';
-import { addQuestions, getQuestions } from '../../../../utils/apiAxios'
+import { editQuestion, getQuestions } from '../../../../utils/apiAxios'
 
 function Transition(props) {
 
@@ -38,7 +38,7 @@ class EditQuestion extends React.Component {
             nameQuestion: dataEdit ? dataEdit.name : '',
             type: dataEdit ? dataEdit.type : '',
             position: dataEdit && dataEdit.position ? dataEdit.position : '',
-            TypeObject: dataEdit && dataEdit.objectType ? dataEdit.objectType : '',
+            TypeObject: dataEdit && dataEdit.type ? dataEdit.type : '',
             confirmDialog: false,
             progress: false,
             tempDelete: {},
@@ -139,14 +139,15 @@ class EditQuestion extends React.Component {
         let name = this.state.nameQuestion
         let position = this.state.position
         let type = this.state.TypeObject
-        let list_question_id = this.state.dataEdit._id
+        console.log('type: ', type,'dataEdit',this.state.dataEdit);
+        let _id = this.state.dataEdit._id
         let data = {
-            name, position, type, list_question_id
+            name, position, type, _id
         }
         let token = this.props.userApp.currentUser.token
-        addQuestions(data, token).then(res => {
+        editQuestion(data, token).then(res => {
             console.log(res)
-            toast.success("Thêm câu hỏi thành công!", {
+            toast.success("Sửa câu hỏi thành công!", {
                 position: toast.POSITION.TOP_RIGHT
             });
             this.handleClose();
@@ -242,7 +243,7 @@ class EditQuestion extends React.Component {
                                 </DialogActions> :
                                 <DialogActions>
                                     <Button onClick={this.handleClose} variant="contained" color="inherit">Hủy bỏ</Button>
-                                    <Button variant="contained" color="secondary" type="submit">Thêm mới </Button>
+                                    <Button variant="contained" color="secondary" type="submit">Cập nhật </Button>
                                 </DialogActions>
                         }
                     </ValidatorForm>
