@@ -236,3 +236,16 @@ export function editReply(data, token) {
         })
         .catch(err => err);
 }
+export function deleteReply(id_anwser, token) {
+    return instance
+        .post('/delete-anwser', {id_anwser}, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        }).then(response => {
+            console.log('response: ', response);
+            return response.data;
+        })
+        .catch(err => err);
+}

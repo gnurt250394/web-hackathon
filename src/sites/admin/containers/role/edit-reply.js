@@ -12,7 +12,7 @@ import Grid from '@material-ui/core/Grid';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import ConfirmDialog from '../../components/confirm';
 import RoleProvider from '../../../../data-access/role-provider';
-import { addReply } from '../../../../utils/apiAxios'
+import { editReply } from '../../../../utils/apiAxios'
 
 function Transition(props) {
 
@@ -20,10 +20,11 @@ function Transition(props) {
 }
 
 var md5 = require('md5');
-class AddReply extends React.Component {
+class EditReply extends React.Component {
     constructor(props) {
         super(props)
         let dataEdit = this.props.data
+        console.log('dataEdit: ', dataEdit);
         this.state = {
             dataEdit,
             open: true,
@@ -32,7 +33,7 @@ class AddReply extends React.Component {
             updatePersonId: (this.props.userApp.currentUser || {}).id,
             name: '',
             code: '',
-            nameListQuestion: dataEdit ? dataEdit.name : '',
+            nameQuestion: dataEdit ? dataEdit.name : '',
             type: dataEdit ? dataEdit.type : '',
             typeSicks: dataEdit && dataEdit.sicks && dataEdit.sicks.name ? dataEdit.sicks.name : '',
             TypeObject: dataEdit && dataEdit.objectType ? dataEdit.objectType : '',
@@ -40,6 +41,9 @@ class AddReply extends React.Component {
             progress: false,
             tempDelete: {},
             checked: false,
+            from: dataEdit && dataEdit.from_point ? dataEdit.from_point : '',
+            to: dataEdit && dataEdit.to_point ? dataEdit.to_point : '',
+            total: dataEdit && dataEdit.total ? dataEdit.total : '',
             objectType: [{
                 type: {
                     id: 1,
@@ -137,27 +141,24 @@ class AddReply extends React.Component {
         let from_point = this.state.from
         let to_point = this.state.to
         let total = this.state.total
-        let question_id = this.state.dataEdit._id
-        console.log('this.state.dataEdit: ', this.state.dataEdit);
+        let id_anwser = this.state.dataEdit._id
         // if (from < to) {
         //     toast.error("Bạn nhập sai khung điểm", {
         //         position: toast.POSITION.TOP_CENTER
         //     });
         //     return
         // }
-        let data = [
-            {
-                name,
-                question_id,
-                from_point,
-                to_point,
-                total
-            }
-        ]
+        let data =
+        {
+            name, from_point, to_point, total, id_anwser
+        }
+
+        console.log('data: ', data);
         let token = this.props.userApp.currentUser.token
-        addReply(data, token).then(res => {
+        editReply(data, token).then(res => {
+
             console.log(res)
-            toast.success("Thêm câu trả lời thành công!", {
+            toast.success("Sửa câu trả lời thành công!", {
                 position: toast.POSITION.TOP_RIGHT
             });
             this.handleClose();
@@ -182,7 +183,7 @@ class AddReply extends React.Component {
 
                     <ValidatorForm onSubmit={this.create}>
                         <DialogTitle id="alert-dialog-slide-title">
-                            Tạo mới câu trả lời
+                            Sửa câu trả lời
                             {dataRole.roles && dataRole.roles.id && deleteable ? <Button style={{ float: "right" }} onClick={() => this.showModalDelete(dataRole)} variant="contained" color="inherit">Xóa</Button> : null}
                         </DialogTitle>
                         <DialogContent>
@@ -244,7 +245,7 @@ class AddReply extends React.Component {
                                 </DialogActions> :
                                 <DialogActions>
                                     <Button onClick={this.handleClose} variant="contained" color="inherit">Hủy bỏ</Button>
-                                    <Button variant="contained" color="secondary" type="submit">Thêm mới </Button>
+                                    <Button variant="contained" color="secondary" type="submit">Cập nhật</Button>
 
                                 </DialogActions>
                         }
@@ -278,4 +279,4 @@ const styles = theme => ({
     }
 });
 
-export default withStyles(styles)(connect(mapStateToProps)(AddReply));
+export default withStyles(styles)(connect(mapStateToProps)(EditReply));
