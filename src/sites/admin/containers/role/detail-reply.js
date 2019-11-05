@@ -18,9 +18,10 @@ import LinearProgress from '@material-ui/core/LinearProgress';
 import AddQuestions from './add-questions'
 import AddReply from './add-reply'
 import IconButton from '@material-ui/core/IconButton';
-import { getQuestions, getReply } from '../../../../utils/apiAxios'
+import { deleteReply, getReply } from '../../../../utils/apiAxios'
 import ConfirmDialog from '../../components/confirm/';
-
+import { toast } from 'react-toastify';
+import EditReply from './edit-reply'
 
 function Transition(props) {
     return <Slide direction="up" {...props} />;
@@ -44,9 +45,10 @@ class DetailReply extends React.Component {
             checked: false,
             addReply: false,
             stt: 1,
-            confirmDialog:false,
-            dataPermission: []
-
+            editReply: false,
+            confirmDialog: false,
+            dataPermission: [],
+            dataEdit: [],
         };
     }
 
@@ -77,7 +79,7 @@ class DetailReply extends React.Component {
     }
     closeModal2() {
         this.loadPage()
-        this.setState({ addQuestions: false, addReply: false });
+        this.setState({ addQuestions: false, addReply: false, editReply: false });
     }
     showModalAdd = () => {
         this.setState({ addReply: true, })
@@ -104,6 +106,9 @@ class DetailReply extends React.Component {
                 )
         }
     }
+    showModalDelete(item) {
+        this.setState({ confirmDialog: true, tempDelete: item })
+    }
     renderType = () => {
         const { classes } = this.props;
         const type = this.props.data.type
@@ -118,6 +123,33 @@ class DetailReply extends React.Component {
         }
 
     }
+    delete(type) {
+        if (type == 1) {
+            this.setState({ confirmDialog: false })
+            let id = this.state.tempDelete._id
+            let token = this.props.userApp.currentUser.token
+            deleteReply(id, token).then(res => {
+                console.log('res: ', res);
+                this.loadPage();
+                toast.success("Xóa câu hỏi thành công!", {
+                    position: toast.POSITION.TOP_CENTER
+                });
+                this.setState({ tempDelete: {} });
+            })
+        }
+    }
+    modalCreateUpdate(item) {
+        let dataEdit2 = item
+        dataEdit2.type = this.props.data.type
+        if (item) {
+            this.setState({
+                editReply: true,
+                dataEdit: dataEdit2,
+            })
+
+        }
+    }
+
     render() {
         const { classes } = this.props;
         const { name, code, confirmDialog, dataReply, progress, loadPage } = this.state;
@@ -164,7 +196,7 @@ class DetailReply extends React.Component {
                                                     <TableCell>{item.name}</TableCell>
                                                     <TableCell>{item.from_point}</TableCell>
                                                     <TableCell>{item.to_point}</TableCell>
-                                                    <TableCell>{item.total_point}</TableCell>
+                                                    <TableCell>{item.total}</TableCell>
                                                     <TableCell>
                                                         {
                                                             <IconButton onClick={() => this.modalCreateUpdate(item, 1)} color="primary" className={classes.button} aria-label="EditIcon">
@@ -189,6 +221,7 @@ class DetailReply extends React.Component {
                                 </TableBody>
                             </Table>
                         </div>
+                        {confirmDialog && <ConfirmDialog title="Xác nhận" content="Bạn có chắc chắn muốn xóa role này ra khỏi danh sách?" btnOk="Xác nhận" btnCancel="Hủy" cbFn={this.delete.bind(this)} />}
                     </DialogContent>
                     <DialogActions>
                         <Button onClick={() => this.showModalAdd()} variant="contained" color='secondary'>Thêm câu trả lời</Button>
@@ -198,7 +231,7 @@ class DetailReply extends React.Component {
                     </DialogActions>
                 </Dialog>
                 {this.state.addReply && <AddReply data={this.props.data} callbackOff={this.closeModal2.bind(this)} />}
-                {confirmDialog && <ConfirmDialog title="Xác nhận" content="Bạn có chắc chắn muốn xóa role này ra khỏi danh sách?" btnOk="Xác nhận" btnCancel="Hủy" cbFn={this.delete.bind(this)} />}
+                {this.state.editReply && <EditReply data={this.state.dataEdit} callbackOff={this.closeModal2.bind(this)} />}
 
             </div>
         );
