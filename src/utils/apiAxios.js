@@ -175,7 +175,7 @@ export function getReply(question_id, token) {
 }
 export function deleteQuestion(id_question, token) {
     return instance
-        .post('/delete-questions', id_question, {
+        .post('/delete-questions', {id_question}, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
@@ -221,5 +221,18 @@ export function updateListResult(data, token) {
         console.log('response: ', response);
         return response.data;
     })
+        .catch(err => err);
+}
+export function editReply(data, token) {
+    return instance
+        .post('/edit-anwser', data, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        }).then(response => {
+            console.log('response: ', response);
+            return response.data;
+        })
         .catch(err => err);
 }

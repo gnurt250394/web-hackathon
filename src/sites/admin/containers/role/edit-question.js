@@ -10,9 +10,11 @@ import Slide from '@material-ui/core/Slide';
 import { withStyles } from '@material-ui/core/styles';
 import Grid from '@material-ui/core/Grid';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
+import { SelectValidator } from 'react-material-ui-form-validator';
+import MenuItem from '@material-ui/core/MenuItem';
 import ConfirmDialog from '../../components/confirm';
 import RoleProvider from '../../../../data-access/role-provider';
-import { addReply } from '../../../../utils/apiAxios'
+import { editQuestion, getQuestions } from '../../../../utils/apiAxios'
 
 function Transition(props) {
 
@@ -20,10 +22,11 @@ function Transition(props) {
 }
 
 var md5 = require('md5');
-class AddReply extends React.Component {
+class EditQuestion extends React.Component {
     constructor(props) {
         super(props)
         let dataEdit = this.props.data
+        console.log('dataEdit: ', dataEdit);
         this.state = {
             dataEdit,
             open: true,
@@ -32,10 +35,10 @@ class AddReply extends React.Component {
             updatePersonId: (this.props.userApp.currentUser || {}).id,
             name: '',
             code: '',
-            nameListQuestion: dataEdit ? dataEdit.name : '',
+            nameQuestion: dataEdit ? dataEdit.name : '',
             type: dataEdit ? dataEdit.type : '',
-            typeSicks: dataEdit && dataEdit.sicks && dataEdit.sicks.name ? dataEdit.sicks.name : '',
-            TypeObject: dataEdit && dataEdit.objectType ? dataEdit.objectType : '',
+            position: dataEdit && dataEdit.position ? dataEdit.position : '',
+            TypeObject: dataEdit && dataEdit.type ? dataEdit.type : '',
             confirmDialog: false,
             progress: false,
             tempDelete: {},
@@ -134,32 +137,17 @@ class AddReply extends React.Component {
 
     create = () => {
         let name = this.state.nameQuestion
-        let from = this.state.from
-        console.log('from: ', from);
-        let to = this.state.to
-        console.log('to: ', to);
-        let total = this.state.total
-        let question_id = this.state.dataEdit._id
-        console.log('this.state.dataEdit: ', this.state.dataEdit);
-        // if (from < to) {
-        //     toast.error("Bạn nhập sai khung điểm", {
-        //         position: toast.POSITION.TOP_CENTER
-        //     });
-        //     return
-        // }
-        let data = [
-            {
-                name,
-                question_id,
-                from,
-                to,
-                total
-            }
-        ]
+        let position = this.state.position
+        let type = this.state.TypeObject
+        console.log('type: ', type,'dataEdit',this.state.dataEdit);
+        let _id = this.state.dataEdit._id
+        let data = {
+            name, position, type, _id
+        }
         let token = this.props.userApp.currentUser.token
-        addReply(data, token).then(res => {
+        editQuestion(data, token).then(res => {
             console.log(res)
-            toast.success("Thêm câu trả lời thành công!", {
+            toast.success("Sửa câu hỏi thành công!", {
                 position: toast.POSITION.TOP_RIGHT
             });
             this.handleClose();
@@ -170,8 +158,8 @@ class AddReply extends React.Component {
 
     render() {
         const { classes } = this.props;
-        const { dataRole, name, code, stt, total, progress, confirmDialog, deleteable } = this.state;
-        console.log(this.state.dataEdit.type, 'this.state.dataSicks')
+        const { dataRole, confirmDialog, deleteable } = this.state;
+        console.log(this.state.typeSicks, 'this.state.dataSicks')
         return (
             <div style={{ backgroundColor: 'red' }}>
                 <Dialog
@@ -184,7 +172,7 @@ class AddReply extends React.Component {
 
                     <ValidatorForm onSubmit={this.create}>
                         <DialogTitle id="alert-dialog-slide-title">
-                            Tạo mới câu hỏi
+                            Chỉnh sửa câu hỏi
                             {dataRole.roles && dataRole.roles.id && deleteable ? <Button style={{ float: "right" }} onClick={() => this.showModalDelete(dataRole)} variant="contained" color="inherit">Xóa</Button> : null}
                         </DialogTitle>
                         <DialogContent>
@@ -192,41 +180,50 @@ class AddReply extends React.Component {
                                 <Grid item xs={12} md={12}>
                                     <TextValidator
                                         value={this.state.nameQuestion}
-                                        id="name" name="name" label="Tên câu trả lời"
+                                        id="name" name="name" label="Tên câu hỏi"
                                         className={classes.textField}
-                                        // onChange={(event) => this.setState({ name: event.target.value })}
                                         onChange={(event) => { this.data2.name = event.target.value; this.setState({ nameQuestion: event.target.value }) }}
                                         margin="normal"
 
                                     />
-                                    {this.state.dataEdit.type == 2 && <Grid item xs={12} md={12}> <TextValidator
-                                        value={this.state.from}
-                                        id="name" name="name" label="Từ điểm"
-                                        className={classes.textField}
-                                        // onChange={(event) => this.setState({ name: event.target.value })}
-                                        onChange={(event) => { this.data2.name = event.target.value; this.setState({ from: event.target.value }) }}
-                                        margin="normal"
-
-                                    />
-                                        <TextValidator
-                                            value={this.state.to}
-                                            id="name" name="name" label="Đến điểm"
-                                            className={classes.textField}
-                                            // onChange={(event) => this.setState({ name: event.target.value })}
-                                            onChange={(event) => { this.data2.name = event.target.value; this.setState({ to: event.target.value }) }}
-                                            margin="normal"
-
-                                        /> </Grid>}
                                     <TextValidator
-                                        value={this.state.total}
-                                        id="name" name="name" label="Tổng điểm"
+                                        value={this.state.position}
+                                        id="name" name="name" label="Vị trí câu hỏi"
                                         className={classes.textField}
-                                        // onChange={(event) => this.setState({ name: event.target.value })}
-                                        onChange={(event) => { this.data2.name = event.target.value; this.setState({ total: event.target.value }) }}
+                                        onChange={(event) => { this.data2.name = event.target.value; this.setState({ position: event.target.value }) }}
                                         margin="normal"
 
                                     />
                                 </Grid>
+                            </Grid>
+
+                            {/* <TextValidator
+                                        value={name}
+                                        id="name" name="name" label="Role (*)"
+                                        className={classes.textField}
+                                        // onChange={(event) => this.setState({ name: event.target.value })}
+                                        onChange={(event) => { this.data2.name = event.target.value; this.setState({ name: event.target.value }) }}
+                                        margin="normal"
+                                        validators={['required', 'maxLength']}
+                                        errorMessages={['Role không được bỏ trống!', 'Không cho phép nhập quá 255 kí tự!']}
+                                    /> */}
+
+                            <Grid item xs={12} md={6}>
+                                <div style={{ marginBottom: '25px' }}></div>
+                                {
+                                    this.state.TypeObject == -1 ? null : <div style={{ position: "absolute", marginTop: -9, fontSize: 13 }}>Chọn loại câu hỏi</div>
+                                }
+                                <SelectValidator
+                                    value={this.state.TypeObject}
+                                    onChange={(event) => { this.data2.sicks = event.target.value; this.setState({ TypeObject: event.target.value }); console.log(event, 'âsđâsd') }}
+                                    inputProps={{ name: 'selectGender', id: 'selectGender' }}
+                                    style={{ width: '100%', marginTop: 8 }}>
+                                    {
+                                        this.state.objectType && this.state.objectType.length ? this.state.objectType.map((option, index) =>
+                                            <MenuItem key={index} value={option.type.id}>{option.type.name}</MenuItem>
+                                        ) : null
+                                    }
+                                </SelectValidator>
                             </Grid>
                         </DialogContent>
                         {/* <DialogActions>
@@ -246,14 +243,13 @@ class AddReply extends React.Component {
                                 </DialogActions> :
                                 <DialogActions>
                                     <Button onClick={this.handleClose} variant="contained" color="inherit">Hủy bỏ</Button>
-                                    <Button variant="contained" color="secondary" type="submit">Thêm mới </Button>
-
+                                    <Button variant="contained" color="secondary" type="submit">Cập nhật </Button>
                                 </DialogActions>
                         }
                     </ValidatorForm>
                 </Dialog>
                 {confirmDialog && <ConfirmDialog title="Xác nhận" content="Bạn có chắc chắn muốn xóa role này ra khỏi danh sách?" btnOk="Xác nhận" btnCancel="Hủy" cbFn={this.delete.bind(this)} />}
-            </div>
+            </div >
         );
     }
 }
@@ -280,4 +276,4 @@ const styles = theme => ({
     }
 });
 
-export default withStyles(styles)(connect(mapStateToProps)(AddReply));
+export default withStyles(styles)(connect(mapStateToProps)(EditQuestion));
