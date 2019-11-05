@@ -76,7 +76,7 @@ class Home extends Component {
             },
             {
                 // role: [536870912],
-                name: "Câu hỏi",
+                name: "Quản lý kết quả câu hỏi",
                 url: '/admin/ticket',
                 imgUrl: '/images/icon/ic-calendar-bold.svg',
                 classActiveStyle: 'calendar-working',
