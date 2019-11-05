@@ -198,7 +198,7 @@ class EditReply extends React.Component {
                                         margin="normal"
 
                                     />
-                                    {this.state.dataEdit.type !== 2 && <Grid item xs={12} md={12}> <TextValidator
+                                    {this.state.dataEdit.type !== 2 && this.state.dataEdit.type != 3 && <Grid item xs={12} md={12}> <TextValidator
                                         value={this.state.from}
                                         id="name" name="name" label="Từ điểm"
                                         className={classes.textField}
