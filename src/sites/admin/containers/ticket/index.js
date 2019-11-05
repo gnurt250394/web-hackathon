@@ -21,7 +21,7 @@ import { matchPath } from 'react-router-dom'
 import TextField from '@material-ui/core/TextField';
 import EnhancedTableToolbar from '../../components/table-toolbar';
 import { listQuestion, getListResult } from '../../../../utils/apiAxios'
-
+import EditResult from './edit-Result'
 class ticket extends Component {
   constructor(props) {
     super(props);
@@ -41,7 +41,7 @@ class ticket extends Component {
       stringQuyery: '',
       totalImport: 0,
       sort: true,
-      data: [],
+      dataResult: [],
       total: 0,
       labelWidth: 0,
       selected: [{
@@ -68,7 +68,7 @@ class ticket extends Component {
       userType: 0,
       dataDetail: {},
       progress: false,
-      modalAdd: false,
+      editResult: false,
       modalDetailtSpecialist: false,
       confirmDialog: false,
       tempDelete: [],
@@ -92,7 +92,7 @@ class ticket extends Component {
   }
   updateTicket = (item) => {
     this.setState({
-      modalAdd: true,
+      editResult: true,
       item: item
     })
     //     if (item) {
@@ -227,12 +227,15 @@ class ticket extends Component {
     // }, 1000);
     let token = this.props.userApp.currentUser.token
     getListResult(token).then(res => {
+      this.setState({
+        dataResult: res.data
+      })
       console.log(res)
     })
   }
   closeModal() {
     this.loadPage();
-    this.setState({ modalAdd: false, modalDetailtAdmin: false, modalSetPassword: false });
+    this.setState({ editResult: false, modalDetailtAdmin: false, modalSetPassword: false });
   }
 
   handleChangeRowsPerPage = event => {
@@ -252,36 +255,37 @@ class ticket extends Component {
   onNumberChanger = (event) => {
     this.setState({ number: event.target.valuent })
   }
-  convertAccountSource(accountSource) {
-    if (accountSource === 'HIS_YKHN')
-      return 'Đăng ký tại YKHN';
-    if (accountSource === 'HIS_BVE')
-      return 'Đăng ký tại BVE';
-    if (accountSource === 'REGISTER_MOBILE')
-      return 'Đăng ký trên mobile';
-    if (accountSource === 'REGISTER_WEB')
-      return 'Đăng ký trên mobile';
-    if (accountSource === "IMPORT")
-      return "Import excel";
+  renderType = (type) => {
+    switch (Number(type)) {
+      case 1:
+        return (
+          <TableCell style={{ wordBreak: "break-all" }}>Bệnh nhân xanh</TableCell>
+        )
+      case 2:
+        return (
+          <TableCell style={{ wordBreak: "break-all" }}>Bệnh nhân vàng</TableCell>
+        )
+      case 3:
+        return (
+          <TableCell style={{ wordBreak: "break-all" }}>Bệnh nhân đỏ</TableCell>
+        )
+      default: {
+        return (<TableCell style={{ wordBreak: "break-all" }}>Bệnh nhân đỏ</TableCell>)
+      }
+    }
   }
-
   render() {
     const url = matchPath('/admin/ticket-controller', { path: '/admin/ticket-controller' })
     console.log(url, 'urlurlurl');
     const { classes } = this.props;
-    const { data, dataHospital, page, size, total, progress, stt } = this.state;
+    const { dataResult, dataHospital, page, size, total, progress, stt } = this.state;
     return (
       <div>
         <div className={classes.tableWrapper}>
           <div className="link-user-tracking-group">
-            <Link to="/admin/ticket">
-              <span style={{ color: 'black', borderBottom: '1px' }} className="title-page-user-tracking">
-                Thiết lập giờ
+            <span style={{ color: 'black', borderBottom: '1px' }} className="title-page-user-tracking">
+              Thiết lập giờ
                 </span>
-            </Link><span>|</span>
-            <Link to="/admin/ticket-controller"><span className="title-page-user-tracking">
-              Quản lý tài khoản lấy số
-                </span></Link>
           </div>
           <EnhancedTableToolbar
             title=""
@@ -295,40 +299,30 @@ class ticket extends Component {
               <TableHead>
                 <TableRow>
                   <TableCell>STT</TableCell>
-                  <TableCell>Tên cơ sở y tế
+                  <TableCell>Loại bệnh nhân
                         </TableCell>
-                  <TableCell>Thời gian hết hạn
+                  <TableCell>Từ
                         </TableCell>
-                  <TableCell>Thứ trong tuần
+                  <TableCell>Đến
                         </TableCell>
-                  <TableCell>Áp dụng đến
-                        </TableCell>
-                  <TableCell>Tổng lượt lấy số</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
                 {
-                  dataHospital && dataHospital.length ? dataHospital.map((item, index) => {
+                  dataResult && dataResult.length ? dataResult.map((item, index) => {
                     return (
                       <TableRow
                         hover
                         key={index}
                         tabIndex={-1}>
-                        <TableCell>{index + stt}</TableCell>
-                        <TableCell style={{ wordBreak: "break-all" }}>{item.hospital.name}</TableCell>
+                        <TableCell>{index + 1}</TableCell>
+                        {this.renderType(item.type)}
                         <TableCell style={{ wordBreak: "break-all" }}>
-                          {item.hospital.timeCombin ? item.hospital.timeCombin : ''}
+                          {item.from_point}
                         </TableCell>
                         <TableCell style={{ wordBreak: "break-all" }}>
-                          {item.hospital.dailyCombin ? item.hospital.dailyCombin : ''}
+                          {item.to_point}
                         </TableCell>
-                        <TableCell style={{ wordBreak: "break-all" }}><MuiPickersUtilsProvider utils={MomentUtils}>
-                          {item.hospital.expired ? moment(item.hospital.expired).format('DD-MM-YYYY') : ''}
-                        </MuiPickersUtilsProvider></TableCell>
-                        <TableCell style={{ wordBreak: "break-all" }}><MuiPickersUtilsProvider utils={MomentUtils}>
-                          {item.hospital.numTurn ? item.hospital.numTurn : ''}
-                        </MuiPickersUtilsProvider></TableCell>
-
                         <TableCell>
                           <Button className="button-new" variant="contained" color="secondary" onClick={() => this.updateTicket(item)} style={{ marginLeft: 20, marginTop: 17 }}>Thiết lập</Button>
                         </TableCell>
@@ -355,7 +349,7 @@ class ticket extends Component {
                     ActionsComponent={TablePaginationActions}
                   />
                 </TableRow>
-                {this.state.modalAdd && <ModalAddUpdate data={this.state.item} callbackOff={this.closeModal.bind(this)} />}
+                {this.state.editResult && <EditResult data={this.state.item} callbackOff={this.closeModal.bind(this)} />}
               </TableFooter>
             </Table>
 
