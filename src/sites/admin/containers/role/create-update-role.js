@@ -15,7 +15,7 @@ import MenuItem from '@material-ui/core/MenuItem';
 import ConfirmDialog from '../../components/confirm/';
 import RoleProvider from '../../../../data-access/role-provider';
 
-import { createList, getSicks } from '../../../../utils/apiAxios'
+import { createList, getSicks, editList } from '../../../../utils/apiAxios'
 
 function Transition(props) {
 
@@ -36,7 +36,7 @@ class CreateUpdateRole extends React.Component {
             code: '',
             nameListQuestion: dataEdit ? dataEdit.name : '',
             type: dataEdit ? dataEdit.type : '',
-            typeSicks: dataEdit && dataEdit.sicks && dataEdit.sicks.name ? dataEdit.sicks.name : '',
+            typeSicks: '',
             TypeObject: dataEdit && dataEdit.objectType ? dataEdit.objectType : '',
             confirmDialog: false,
             progress: false,
@@ -140,41 +140,49 @@ class CreateUpdateRole extends React.Component {
     }
 
     create = () => {
-       if(this.state.dataEdit){
-        let name = this.state.nameListQuestion
-        let type = this.state.type
-        let disease_id = this.state.typeSicks
-        let objectType = this.state.TypeObject
-        let list_question_id = this.state.dataEdit._id
-        let token = this.props.userApp.currentUser.token
-        let data = {
-            name, type, disease_id, objectType,list_question_id
+        console.log(this.state.dataRole);
+        if (this.state.dataRole) {
+            let name = this.state.nameListQuestion
+            let type = this.state.type
+            let disease_id = this.state.typeSicks
+            let objectType = this.state.TypeObject
+            let id = this.state.dataRole._id
+            let token = this.props.userApp.currentUser.token
+            let data = {
+                id, name, type, disease_id, objectType,
+            }
+            if (!disease_id) {
+                toast.error("Hãy chọn lại tên bệnh!", {
+                    position: toast.POSITION.TOP_CENTER
+                });
+                return
+            } else {
+                editList(data, token).then(res => {
+                    this.handleClose();
+                    console.log(res);
+                }).catch(err => {
+                    console.log(err);
+                })
+            }
+
+        } else {
+            let name = this.state.nameListQuestion
+            let type = this.state.type
+            let disease_id = this.state.typeSicks
+            let objectType = this.state.TypeObject
+            // if (this.validateDataSend() === '') {     
+            let token = this.props.userApp.currentUser.token
+            let data = {
+                name, type, disease_id, objectType
+            }
+            console.log(data)
+            createList(data, token).then(res => {
+                this.handleClose();
+                console.log(res);
+            }).catch(err => {
+                console.log(err);
+            })
         }
-        console.log(data)
-        createList(data, token).then(res => {
-            this.handleClose();
-            console.log(res);
-        }).catch(err => {
-            console.log(err);
-        })
-       }else{
-        let name = this.state.nameListQuestion
-        let type = this.state.type
-        let disease_id = this.state.typeSicks
-        let objectType = this.state.TypeObject
-        // if (this.validateDataSend() === '') {
-        let token = this.props.userApp.currentUser.token
-        let data = {
-            name, type, disease_id, objectType
-        }
-        console.log(data)
-        createList(data, token).then(res => {
-            this.handleClose();
-            console.log(res);
-        }).catch(err => {
-            console.log(err);
-        })
-       }
         // return
         // const { dataRole, name, code, createPersonId, updatePersonId, } = this.state;
         // let id = dataRole && dataRole.roles ? dataRole.roles.id : '';
@@ -344,7 +352,7 @@ class CreateUpdateRole extends React.Component {
                             <Button variant="contained" color="primary" type="submit">Ok</Button>
                         </DialogActions> */}
                         {
-                            dataRole.roles && dataRole.roles.id ?
+                            dataRole  ?
                                 <DialogActions>
                                     <Button onClick={this.handleClose} variant="contained" color="inherit">Hủy bỏ</Button>
                                     {
