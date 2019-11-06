@@ -284,14 +284,11 @@ class ticket extends Component {
         <div className={classes.tableWrapper}>
           <div className="link-user-tracking-group">
             <span style={{ color: 'black', borderBottom: '1px' }} className="title-page-user-tracking">
-              Thiết lập giờ
+              Thiết lập điểm câu hỏi
                 </span>
           </div>
           <EnhancedTableToolbar
             title=""
-            actionsChiren={
-              this.renderChirenToolbar()
-            }
           />
           {progress ? <LinearProgress /> : null}
           <div className="table-wrapper">
