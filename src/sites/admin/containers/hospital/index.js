@@ -409,21 +409,21 @@ class Hospital extends React.Component {
                                                 hover
                                                 key={index}
                                                 tabIndex={-1}>
-                                                <TableCell onClick={() => this.modalDetailHospital(item)}>{index + 1}</TableCell>
-                                                <TableCell onClick={() => this.modalDetailHospital(item)} style={{ wordBreak: "break-all" }}>
+                                                <TableCell>{index + 1}</TableCell>
+                                                <TableCell style={{ wordBreak: "break-all" }}>
                                                     {item.user.name}
                                                 </TableCell>
-                                                <TableCell onClick={() => this.modalDetailHospital(item)}>
+                                                <TableCell>
                                                     {item.content}
                                                 </TableCell>
-                                                <TableCell onClick={() => this.modalDetailHospital(item)}>
+                                                <TableCell>
                                                     {moment(item.create_at).format("DD-MM-YYYY HH:MM:SS")}
                                                 </TableCell>
 
-                                                <TableCell onClick={() => this.modalDetailHospital(item)}>
+                                                <TableCell>
                                                     {item.doctor.name}
                                                 </TableCell>
-                                                <TableCell onClick={() => this.modalDetailHospital(item)}>
+                                                <TableCell>
                                                     {item.status}
                                                 </TableCell>
                                                 {/* {
