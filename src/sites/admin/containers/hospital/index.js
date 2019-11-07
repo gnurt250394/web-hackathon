@@ -345,7 +345,9 @@ class Hospital extends React.Component {
     
     onConfirm = (item) => {
         let id_report = item._id
+        console.log('id_report: ', id_report);
         let token = this.props.userApp.currentUser.token
+        console.log('token: ', token);
         confirmReport(id_report, token).then(res => {
             toast.success("Xác nhận báo cáo khẩn cấp thành công!", {
                 position: toast.POSITION.TOP_RIGHT

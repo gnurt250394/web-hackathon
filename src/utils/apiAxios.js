@@ -151,7 +151,7 @@ export function getQuestions(list_question_id, token) {
 }
 export function confirmReport(id_report, token) {
     return instance
-        .post('/confirm-report', id_report, {
+        .post('/confirm-report', {id_report}, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`
