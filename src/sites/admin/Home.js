@@ -82,6 +82,13 @@ class Home extends Component {
                 classActiveStyle: 'calendar-working',
             },
             {
+                // role: [536870912],
+                name: "Quản lý lời dặn bác sĩ",
+                url: '/admin/MgrConfirm',
+                imgUrl: '/images/icon/ic-calendar-bold.svg',
+                classActiveStyle: 'calendar-working',
+            },
+            {
                 role: [65536],
                 name: "Báo cáo khẩn cấp",
                 url: '/admin/hospital',

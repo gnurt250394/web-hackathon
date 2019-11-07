@@ -25,7 +25,10 @@ const MgrAdmin = Loadable({
   loader: () => import('../containers/mgr-admin'),
   loading: Loading,
 })
-
+const MgrConfirm = Loadable({
+  loader: () => import('../containers/confirmDoctor'),
+  loading: Loading,
+})
 const Post = Loadable({
   loader: () => import('../containers/post'),
   loading: Loading,
@@ -136,6 +139,7 @@ const routes = [
   { path: '/admin/wallets-hospital/:id', name: "", component: MgrDetailWallets },
   { path: '/admin/doctor-inf', name: "", component: MgrRegisteredDoctor },
   { path: '/admin/specialist', name: "", component: MgrSpecialist },
+  { path: '/admin/MgrConfirm', name: "", component: MgrConfirm },
   { path: '/admin/service-type', name: "", component: MgrServiceType },
   { path: '/admin/booking', name: "", component: MgrBooking },
   { path: '/admin/ticket', name: "", component: MgrTicket },
