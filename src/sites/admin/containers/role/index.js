@@ -97,6 +97,7 @@ class MgrRole extends React.Component {
   }
 
   modalCreateUpdate(item) {
+    console.log('item: ', item);
     if (item) {
       this.setState({
         modalAdd: true,

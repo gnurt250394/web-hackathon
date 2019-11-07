@@ -50,6 +50,23 @@ export function createList(data, token) {
 
         });
 }
+export function editList(data, token) {
+    console.log('data: ', data);
+    return instance
+        .post('/edit-list-questions', data, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${token}`
+            }
+        }).then(response => {
+            console.log('response: ', response);
+            return response.data;
+        })
+        .catch(err => {
+            console.log('err: ', err.request);
+
+        });
+}
 export function getSicks(token) {
     return instance
         .get('/list-sicks', {
@@ -134,7 +151,7 @@ export function getQuestions(list_question_id, token) {
 }
 export function confirmReport(id_report, token) {
     return instance
-        .post('/confirm-report', id_report, {
+        .post('/confirm-report', {id_report}, {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${token}`

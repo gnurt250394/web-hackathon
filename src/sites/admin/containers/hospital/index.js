@@ -342,60 +342,12 @@ class Hospital extends React.Component {
         }
     }
 
-    renderChirenToolbar() {
-        const { classes } = this.props;
-        const { active, stringQuyery, createable } = this.state;
-        return (
-            <div>
-                <TextField
-                    style={{ marginTop: 8, marginLeft: 0, width: '40%', float: 'left' }}
-                    id="outlined-textarea"
-                    label="Tìm kiếm"
-                    placeholder="Họ tên / Email / SĐT / Mã số thuế"
-                    // multiline
-                    className={classes.textField}
-                    margin="normal"
-                    variant="outlined"
-                    value={stringQuyery}
-                    onChange={(event) => this.handleChangeFilter(event, 1)}
-                />
-                <FormControl variant="outlined" className={classes.formControl}>
-                    <InputLabel style={{ background: '#FFF', marginTop: '-7px' }}
-                        ref={ref => {
-                            this.InputLabelRef = ref;
-                        }}
-                        htmlFor="outlined-age-simple"
-                    >
-                        Trạng thái
-                    </InputLabel>
-                    <Select
-                        style={{ width: 150, height: 55, textAlign: "left" }}
-                        value={active}
-                        onChange={(event) => this.handleChangeFilter(event, 2)}
-                        input={
-                            <OutlinedInput
-                                labelWidth={this.state.labelWidth}
-                                name="age"
-                                id="outlined-age-simple"
-                            />
-                        }
-                    >
-                        <MenuItem value={-1}>Tất cả</MenuItem>
-                        <MenuItem value={1}>Active</MenuItem>
-                        <MenuItem value={0}>Inactive</MenuItem>
-                    </Select>
-                </FormControl>
-                {
-                    createable ?
-                        <Button className="button-new" variant="contained" color="secondary" onClick={() => this.modalCreateUpdate()} style={{ marginLeft: 20, marginTop: 17 }}>Thêm mới</Button>
-                        : null
-                }
-            </div>
-        )
-    }
+    
     onConfirm = (item) => {
         let id_report = item._id
+        console.log('id_report: ', id_report);
         let token = this.props.userApp.currentUser.token
+        console.log('token: ', token);
         confirmReport(id_report, token).then(res => {
             toast.success("Xác nhận báo cáo khẩn cấp thành công!", {
                 position: toast.POSITION.TOP_RIGHT
@@ -423,9 +375,6 @@ class Hospital extends React.Component {
                         <EnhancedTableToolbar
                             numSelected={selected.length}
                             title=""
-                            actionsChiren={
-                                this.renderChirenToolbar()
-                            }
                         />
                         {progress ? <LinearProgress /> : null}
                         <div className="table-wrapper">
@@ -462,21 +411,21 @@ class Hospital extends React.Component {
                                                 hover
                                                 key={index}
                                                 tabIndex={-1}>
-                                                <TableCell onClick={() => this.modalDetailHospital(item)}>{index + 1}</TableCell>
-                                                <TableCell onClick={() => this.modalDetailHospital(item)} style={{ wordBreak: "break-all" }}>
+                                                <TableCell>{index + 1}</TableCell>
+                                                <TableCell style={{ wordBreak: "break-all" }}>
                                                     {item.user.name}
                                                 </TableCell>
-                                                <TableCell onClick={() => this.modalDetailHospital(item)}>
+                                                <TableCell>
                                                     {item.content}
                                                 </TableCell>
-                                                <TableCell onClick={() => this.modalDetailHospital(item)}>
+                                                <TableCell>
                                                     {moment(item.create_at).format("DD-MM-YYYY HH:MM:SS")}
                                                 </TableCell>
 
-                                                <TableCell onClick={() => this.modalDetailHospital(item)}>
+                                                <TableCell>
                                                     {item.doctor.name}
                                                 </TableCell>
-                                                <TableCell onClick={() => this.modalDetailHospital(item)}>
+                                                <TableCell>
                                                     {item.status}
                                                 </TableCell>
                                                 {/* {

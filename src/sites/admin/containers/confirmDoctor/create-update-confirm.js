@@ -12,7 +12,7 @@ import Grid from '@material-ui/core/Grid';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator';
 import { SelectValidator } from 'react-material-ui-form-validator';
 import MenuItem from '@material-ui/core/MenuItem';
-import ConfirmDialog from '../../components/confirm/';
+import ConfirmDialog from '../../components/confirm';
 import RoleProvider from '../../../../data-access/role-provider';
 
 import { createList, getSicks, editList } from '../../../../utils/apiAxios'
@@ -242,7 +242,7 @@ class CreateUpdateRole extends React.Component {
 
     render() {
         const { classes } = this.props;
-        const { dataRole,confirmDialog, deleteable } = this.state;
+        const { dataRole, confirmDialog, deleteable } = this.state;
         console.log(this.state.typeSicks, 'this.state.dataSicks')
         return (
             <div style={{ backgroundColor: 'red' }}>
@@ -263,30 +263,16 @@ class CreateUpdateRole extends React.Component {
                                 <Grid item xs={12} md={12}>
                                     <TextValidator
                                         value={this.state.nameListQuestion}
-                                        id="name" name="name" label="Tên danh sách câu hỏi"
+                                        id="name" name="name" label="Nội dung lời dặn(*)"
                                         className={classes.textField}
                                         // onChange={(event) => this.setState({ name: event.target.value })}
                                         onChange={(event) => { this.data2.name = event.target.value; this.setState({ nameListQuestion: event.target.value }) }}
                                         margin="normal"
+                                        validators={['required', 'maxLength']}
+                                        errorMessages={['Lời dặn không được bỏ trống!', 'Không cho phép nhập quá 500 kí tự!']}
 
                                     />
-                                    <Grid item xs={12} md={6}>
-                                        <div style={{ marginBottom: '25px' }}></div>
-                                        {
-                                            this.state.listType == -1 ? null : <div style={{ position: "absolute", marginTop: -9, fontSize: 13 }}>Chọn loại câu hỏi</div>
-                                        }
-                                        <SelectValidator
-                                            value={this.state.type}
-                                            onChange={(event) => { this.data2.gender = event.target.value; this.setState({ type: event.target.value }); console.log(event, 'âsđâsd') }}
-                                            inputProps={{ name: 'selectGender', id: 'selectGender' }}
-                                            style={{ width: '100%', marginTop: 8 }}>
-                                            {
-                                                this.state.listType && this.state.listType.length ? this.state.listType.map((option, index) =>
-                                                    <MenuItem key={index} value={option.type.id}>{option.type.name}</MenuItem>
-                                                ) : null
-                                            }
-                                        </SelectValidator>
-                                    </Grid>
+
                                     {/* <TextValidator
                                         value={name}
                                         id="name" name="name" label="Role (*)"
@@ -299,35 +285,8 @@ class CreateUpdateRole extends React.Component {
                                     /> */}
                                 </Grid>
                             </Grid>
-                            <Grid item xs={12} md={6}>
-                                <div style={{ marginBottom: '25px' }}></div>
-                                {
-                                    this.state.typeSicks == -1 ? null : <div style={{ position: "absolute", marginTop: -9, fontSize: 13 }}>Chọn loại bệnh</div>
-                                }
-                                <SelectValidator
-                                    value={this.state.typeSicks}
-                                    onChange={(event) => { this.data2.sicks = event.target.value; this.setState({ typeSicks: event.target.value }); console.log(event, 'âsđâsd') }}
-                                    inputProps={{ name: 'selectGender', id: 'selectGender' }}
-                                    style={{ width: '100%', marginTop: 8 }}>
-                                    {
-                                        this.state.dataSicks && this.state.dataSicks.length ? this.state.dataSicks.map((option, index) =>
-                                            <MenuItem key={index} value={option._id}>{option.name}</MenuItem>
-                                        ) : null
-                                    }
-                                </SelectValidator>
-                            </Grid>
-                            {/* <TextValidator
-                                        value={name}
-                                        id="name" name="name" label="Role (*)"
-                                        className={classes.textField}
-                                        // onChange={(event) => this.setState({ name: event.target.value })}
-                                        onChange={(event) => { this.data2.name = event.target.value; this.setState({ name: event.target.value }) }}
-                                        margin="normal"
-                                        validators={['required', 'maxLength']}
-                                        errorMessages={['Role không được bỏ trống!', 'Không cho phép nhập quá 255 kí tự!']}
-                                    /> */}
 
-                            {this.state.type == 2 ? <Grid item xs={12} md={6}>
+                            <Grid item xs={12} md={6}>
                                 <div style={{ marginBottom: '25px' }}></div>
                                 {
                                     this.state.TypeObject == -1 ? null : <div style={{ position: "absolute", marginTop: -9, fontSize: 13 }}>Chọn loại bệnh nhân</div>
@@ -343,14 +302,14 @@ class CreateUpdateRole extends React.Component {
                                         ) : null
                                     }
                                 </SelectValidator>
-                            </Grid> : null}
+                            </Grid>
                         </DialogContent>
                         {/* <DialogActions>
                             <Button onClick={this.handleClose} variant="contained" color="inherit">Cancel</Button>
                             <Button variant="contained" color="primary" type="submit">Ok</Button>
                         </DialogActions> */}
                         {
-                            dataRole  ?
+                            dataRole ?
                                 <DialogActions>
                                     <Button onClick={this.handleClose} variant="contained" color="inherit">Hủy bỏ</Button>
                                     {
@@ -371,7 +330,7 @@ class CreateUpdateRole extends React.Component {
                         }
                     </ValidatorForm>
                 </Dialog>
-                {confirmDialog && <ConfirmDialog title="Xác nhận" content="Bạn có chắc chắn muốn xóa list câu hỏi  này ra khỏi danh sách?" btnOk="Xác nhận" btnCancel="Hủy" cbFn={this.delete.bind(this)} />}
+                {confirmDialog && <ConfirmDialog title="Xác nhận" content="Bạn có chắc chắn muốn xóa lời dặn này ra khỏi danh sách?" btnOk="Xác nhận" btnCancel="Hủy" cbFn={this.delete.bind(this)} />}
             </div >
         );
     }
